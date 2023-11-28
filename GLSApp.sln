@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GLSApp", "GLSApp\GLSApp.csproj", "{106F9A37-BA51-4553-A9D0-86CCA3482F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLSAppTests", "GLSAppTests\GLSAppTests.csproj", "{4F9C68D7-806F-4887-A725-4DA7532FCDAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{106F9A37-BA51-4553-A9D0-86CCA3482F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{106F9A37-BA51-4553-A9D0-86CCA3482F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{106F9A37-BA51-4553-A9D0-86CCA3482F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{106F9A37-BA51-4553-A9D0-86CCA3482F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F9C68D7-806F-4887-A725-4DA7532FCDAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9C68D7-806F-4887-A725-4DA7532FCDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F9C68D7-806F-4887-A725-4DA7532FCDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F9C68D7-806F-4887-A725-4DA7532FCDAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BCE8C224-7133-4A24-A701-BCAD19382162}
+	EndGlobalSection
+EndGlobal
