@@ -42,7 +42,7 @@ public class GetLabels
 
                 foreach (var consignData in consignments)
                 {
-                    int? consignmentId = await _glsApiService.PrepareBoxAsync(session, _consignRepository, consignData);
+                    int? consignmentId = await _glsApiService.PrepareBoxAsync(session, consignData);
 
                     if (consignmentId.HasValue)
                     {

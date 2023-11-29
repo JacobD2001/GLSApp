@@ -80,7 +80,7 @@ namespace GLSApp.Services
         /// <param name="consignRepository">An instance of IConsignRepository.</param>
         /// <param name="consign">The consignment details.</param>
         /// <returns>The consignment ID as an integer.</returns>
-        public async Task<int?> PrepareBoxAsync(string session, IConsignRepository consignRepository, Consign consign)
+        public async Task<int?> PrepareBoxAsync(string session, Consign consign)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace GLSApp.Services
                 };
 
                 // Save consign_prep_data to the database and get id of the consignment
-                int? consignmentId = await consignRepository.AddAsync(consign);
+                int? consignmentId = await _consignRepository.AddAsync(consign);
 
                 if (!consignmentId.HasValue)
                 {
@@ -154,7 +154,7 @@ namespace GLSApp.Services
         /// <param name="consignRepository">An instance of IConsignRepository.</param>
         /// <param name="mode">The label mode.</param>
         /// <returns>A list of label files as strings.</returns>
-        public async Task<List<string>> GetLabelsAsync(string session, IConsignRepository consignRepository, LabelMode mode)
+        public async Task<List<string>> GetLabelsAsync(string session, LabelMode mode)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace GLSApp.Services
                 var request = new RestRequest("adePreparingBox_GetConsignLabelsExt", Method.POST);
 
                 // Get consignment IDs from the database
-                List<Consign> consignments = await consignRepository.GetConsignmentsAsync();
+                List<Consign> consignments = await _consignRepository.GetConsignmentsAsync();
                 List<int> consignmentIds = consignments.Select(c => c.Id).ToList();
 
                 // Fetch labels for each consignment
