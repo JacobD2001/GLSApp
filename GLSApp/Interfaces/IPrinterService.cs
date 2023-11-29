@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GLSApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace GLSApp.Interfaces
 {
     public interface IPrinterService
     {
-        Task PrintLabelsAsync(List<string> labels);
+        Task PrintLabelsAsync(List<byte[]> pdfBytesList);
+        Task<byte[]> GeneratePdfFromConsign(Consign consign);
     }
 }

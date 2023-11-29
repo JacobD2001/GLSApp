@@ -10,6 +10,7 @@ using GLSApp.Services;
 using Newtonsoft.Json;
 using System;
 using GLSApp.Interfaces;
+using GLSApp.Models;
 
 public class PrintLabels
 {
@@ -30,19 +31,41 @@ public class PrintLabels
     {
         try
         {
-            // Read the request body to get the list of labels
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            List<string> labels = JsonConvert.DeserializeObject<List<string>>(requestBody);
+            List<Consign> consignments = JsonConvert.DeserializeObject<List<Consign>>(requestBody); //TO DO : TO Powinna byæ lista intów gdzie ka¿dy int to id przesy³ki 
 
-            // Print labels using the PrinterService
-            await _printerService.PrintLabelsAsync(labels);
+            if (consignments != null && consignments.Count > 0)
+            {
+                List<byte[]> pdfBytesList = new List<byte[]>();
 
-            return new OkResult();
+                foreach (Consign consignment in consignments)
+                {
+                    byte[] pdfBytes = await _printerService.GeneratePdfFromConsign(consignment);
+                    pdfBytesList.Add(pdfBytes);
+                }
+
+                await _printerService.PrintLabelsAsync(pdfBytesList);
+
+                return new OkResult();
+            }
+            else
+            {
+                log.LogError("No consignments found in the request.");
+                return new BadRequestResult();
+            }
         }
         catch (Exception ex)
         {
             log.LogError($"Error in PrintLabelsFunction: {ex.Message}");
             return new StatusCodeResult(500);
         }
+
     }
+
+    //do funkcji drukarki wysy³am zapytanie z jsonem w formacie: { "package_id": [label1, label2, ...] } - done
+    //zamieniam jsona na listê pdfów(binarn¹) => pdfBytesList = [pdf1, pdf2, ...]
+    //wysy³am listê pdfów do serwisu drukarki jako argument funkcji PrintLabelsAsync(pdfBytesList) => Ona drukuje
+    //w funkcji drukarki zwracam ok result lub nie ok result
+
+
 }
