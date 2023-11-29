@@ -79,7 +79,6 @@ namespace GLSApp.Services
         /// Prepares a box(consignment) and returns the consignment ID.
         /// </summary>
         /// <param name="session">The session ID.</param>
-        /// <param name="consignRepository">An instance of IConsignRepository.</param>
         /// <param name="consign">The consignment details.</param>
         /// <returns>The consignment ID as an integer.</returns>
         public async Task<int?> PrepareBoxAsync(string session, Consign consign)
@@ -151,7 +150,6 @@ namespace GLSApp.Services
         /// Gets the labels for the consignments and returns a list of label files.
         /// </summary>
         /// <param name="session">The session ID.</param>
-        /// <param name="consignRepository">An instance of IConsignRepository.</param>
         /// <param name="mode">The label mode.</param>
         /// <returns>A list of label files as strings.</returns>
         public async Task<List<string>> GetLabelsAsync(string session, LabelMode mode)
@@ -200,11 +198,10 @@ namespace GLSApp.Services
                     }
                 }
 
-                // Save changes to the database
                 _consignRepository.Save();
 
                 // Return list of labels from all consignments
-                return consignments.SelectMany(c => c.Labels).ToList();
+                return _consignRepository.GetAllLabelsAsync().Result;
             }
             catch (Exception ex)
             {

@@ -12,6 +12,8 @@ namespace GLSApp.Interfaces
         Task<List<Consign>> GetConsignmentsAsync();
         bool Save();
         Task<int?> AddAsync(Consign consign);
+        Task<List<string>> GetAllLabelsAsync();
+        Task<List<Consign>> GetConsignmentsByLabelsAsync(List<string> labels);
 
 
     }

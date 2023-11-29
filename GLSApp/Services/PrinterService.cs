@@ -29,7 +29,7 @@ namespace GLSApp.Services
         /// <summary>
         /// Sends labels to printer.
         /// </summary>
-        /// <param name="labels">The list of labels to print.</param>
+        /// <param name="labels">The list of labels as byte pdf to print.</param>
         /// <exception cref="InvalidOperationException">Thrown when more than 10 labels are provided.</exception>
         /// <exception cref="Exception">Thrown when the printer returns a status code other than OK.</exce
         public async Task PrintLabelsAsync(List<byte[]> pdfBytesList)
@@ -37,15 +37,13 @@ namespace GLSApp.Services
             if (pdfBytesList.Count > 10)
                 throw new InvalidOperationException("Too many labels. Maximum allowed is 10.");
 
-           // string jsonBody = JsonConvert.SerializeObject(new { package_id = labels }); //zamień listę stringów na jsona => jsonBody = { "package_id": [label1, label2, ...] }
-
             var client = new RestClient(printerUrl);
             var request = new RestRequest(Method.POST);
 
             request.AddHeader("Content-Type", "application/json");
             request.AddParameter("application/json", pdfBytesList, ParameterType.RequestBody);
 
-            var response = await client.ExecuteAsync(request); //wyślij request do drukarki
+            var response = await client.ExecuteAsync(request); 
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -84,13 +82,14 @@ namespace GLSApp.Services
                 document.Add(new Paragraph($"Weight: {consignment.Weight}"));
                 document.Add(new Paragraph($"Date: {consignment.Date}"));
                 document.Add(new Paragraph($"Pfc: {consignment.Pfc}"));
-
+             
                 document.Close();
                 writer.Close();
 
                 return ms.ToArray();
             }
         }
+
 
 
 

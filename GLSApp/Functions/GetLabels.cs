@@ -64,14 +64,12 @@ public class GetLabels
                 {
                     log.LogInformation($"Fetched {labelsForPrinting.Count} labels for printing.");
 
-                    // Do something with the labels, e.g., send them to a printer
-
                     return labelsForPrinting;
                 }
                 else
                 {
                     log.LogWarning("No labels found for printing.");
-                    return new List<string>(); // or return null based on your handling
+                    return new List<string>(); 
                 }
             }
             else

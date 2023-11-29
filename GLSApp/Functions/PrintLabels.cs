@@ -15,9 +15,11 @@ using GLSApp.Models;
 public class PrintLabels
 {
     private readonly IPrinterService _printerService;
-    public PrintLabels(IPrinterService printerService)
+    private readonly IConsignRepository _consignRepository;
+    public PrintLabels(IPrinterService printerService, IConsignRepository consignRepository)
     {
         _printerService = printerService;
+        _consignRepository = consignRepository;
     }
 
     /// <summary>
@@ -32,25 +34,36 @@ public class PrintLabels
         try
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            List<Consign> consignments = JsonConvert.DeserializeObject<List<Consign>>(requestBody); //TO DO : TO Powinna byæ lista intów gdzie ka¿dy int to id przesy³ki 
+            var request = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(requestBody);
 
-            if (consignments != null && consignments.Count > 0)
+            if (request.ContainsKey("package_id"))
             {
-                List<byte[]> pdfBytesList = new List<byte[]>();
+                List<string> labels = request["package_id"];
+                List<Consign> consignments = await _consignRepository.GetConsignmentsByLabelsAsync(labels);
 
-                foreach (Consign consignment in consignments)
+                if (consignments != null && consignments.Count > 0)
                 {
-                    byte[] pdfBytes = await _printerService.GeneratePdfFromConsign(consignment);
-                    pdfBytesList.Add(pdfBytes);
+                    List<byte[]> pdfBytesList = new List<byte[]>();
+
+                    foreach (Consign consignment in consignments)
+                    {
+                        byte[] pdfBytes = await _printerService.GeneratePdfFromConsign(consignment);
+                        pdfBytesList.Add(pdfBytes);
+                    }
+
+                    await _printerService.PrintLabelsAsync(pdfBytesList);
+
+                    return new OkResult();
                 }
-
-                await _printerService.PrintLabelsAsync(pdfBytesList);
-
-                return new OkResult();
+                else
+                {
+                    log.LogError("No consignments found for the provided labels.");
+                    return new BadRequestResult();
+                }
             }
             else
             {
-                log.LogError("No consignments found in the request.");
+                log.LogError("No labels provided in the request.");
                 return new BadRequestResult();
             }
         }
@@ -59,13 +72,6 @@ public class PrintLabels
             log.LogError($"Error in PrintLabelsFunction: {ex.Message}");
             return new StatusCodeResult(500);
         }
-
     }
-
-    //do funkcji drukarki wysy³am zapytanie z jsonem w formacie: { "package_id": [label1, label2, ...] } - done
-    //zamieniam jsona na listê pdfów(binarn¹) => pdfBytesList = [pdf1, pdf2, ...]
-    //wysy³am listê pdfów do serwisu drukarki jako argument funkcji PrintLabelsAsync(pdfBytesList) => Ona drukuje
-    //w funkcji drukarki zwracam ok result lub nie ok result
-
 
 }

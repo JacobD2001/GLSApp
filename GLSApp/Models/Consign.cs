@@ -9,10 +9,12 @@ namespace GLSApp.Models
 {
     public class Consign
     {
+        [Key]
         public int Id { get; set; }
-        public List<string> Labels { get; set; }
-        [Required]
         public string RName1 { get; set; }
+        public List<string> Labels { get; set; }
+
+        [Required]
         public string RName2 { get; set; }
         public string RName3 { get; set; }
         [Required]
