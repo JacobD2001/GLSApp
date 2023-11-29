@@ -1,5 +1,7 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using GLSApp.CommunicationModels;
+using GLSApp.CommunicationModels.LabelsArrayStructure;
 using GLSApp.Interfaces;
 using GLSApp.Models;
 using GLSApp.Repositories;
@@ -55,7 +57,7 @@ namespace GLSApp.Services
 
                 if (response.IsSuccessful)
                 {
-                    dynamic responseData = JsonConvert.DeserializeObject(response.Content);
+                    LoginResponse responseData = JsonConvert.DeserializeObject<LoginResponse>(response.Content);
                     return responseData.session;
                 }
                 else
@@ -121,18 +123,16 @@ namespace GLSApp.Services
                     return null;
                 }
 
-                
-
                 request.AddParameter("application/json", JsonConvert.SerializeObject(consignData), ParameterType.RequestBody);
 
                 var response = await client.ExecuteAsync(request);
 
                 if (response.IsSuccessful)
                 {
-                    dynamic responseData = JsonConvert.DeserializeObject(response.Content);
-                    responseData.id = consignmentId.Value; //TO DO: test it
+                    Consign responseData = JsonConvert.DeserializeObject<Consign>(response.Content);
+                    consignmentId = responseData.Id;
                     _consignRepository.Save(); 
-                    return responseData.id;
+                    return responseData.Id;
                 }
                 else
                 {
@@ -159,20 +159,19 @@ namespace GLSApp.Services
             try
             {
                 var client = new RestClient(ApiUrl);
-                var request = new RestRequest("adePreparingBox_GetConsignLabelsExt", Method.POST);
 
                 // Get consignment IDs from the database
                 List<Consign> consignments = await _consignRepository.GetConsignmentsAsync();
-                List<int> consignmentIds = consignments.Select(c => c.Id).ToList();
 
                 // Fetch labels for each consignment
-                List<string> labelFiles = new List<string>();
-                foreach (var consignmentId in consignmentIds)
+                foreach (var consignment in consignments)
                 {
+                    var request = new RestRequest("adePreparingBox_GetConsignLabelsExt", Method.POST);
+
                     var requestData = new
                     {
                         Session = session,
-                        id = consignmentId,
+                        id = consignment.Id,
                         mode = mode.ToString()
                     };
 
@@ -182,23 +181,30 @@ namespace GLSApp.Services
 
                     if (response.IsSuccessful)
                     {
-                        dynamic responseData = JsonConvert.DeserializeObject(response.Content);
-                        var labelsArray = responseData.LabelsArray;
+                        LabelsArrayResponse responseData = JsonConvert.DeserializeObject<LabelsArrayResponse>(response.Content);
+                        var labelsArray = responseData?.Return?.Items;
 
-                        // Process labelsArray and add label files to the list
-                        foreach (var labelData in labelsArray)
+                        // Process labelsArray and add label files to the consignment
+                        if (labelsArray != null)
                         {
-                            string labelFile = labelData.file;
-                            labelFiles.Add(labelFile);
+                            foreach (var labelData in labelsArray)
+                            {
+                                string labelFile = labelData.Label;
+                                consignment.Labels.Add(labelFile);
+                            }
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"Error fetching labels for consignment {consignmentId}: {response.ErrorMessage}");
+                        Console.WriteLine($"Error fetching labels for consignment {consignment.Id}: {response.ErrorMessage}");
                     }
                 }
 
-                return labelFiles;
+                // Save changes to the database
+                _consignRepository.Save();
+
+                // Return list of labels from all consignments
+                return consignments.SelectMany(c => c.Labels).ToList();
             }
             catch (Exception ex)
             {
@@ -206,6 +212,8 @@ namespace GLSApp.Services
                 return null;
             }
         }
+
+
     }
 
 }

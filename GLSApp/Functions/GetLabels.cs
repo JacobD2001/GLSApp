@@ -7,6 +7,7 @@ using static GLSApp.Data.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 
 public class GetLabels
 {
@@ -26,7 +27,7 @@ public class GetLabels
     /// <param name="log">The logger instance.</param>
     /// <returns>A list of labels as strings.</returns>
     [FunctionName("GetLabels")]
-    public async Task<List<string>> RunAsync([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
+    public async Task<List<string>> RunAsync([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log, LabelMode mode)
     {
         try
         {
@@ -38,7 +39,8 @@ public class GetLabels
 
                 List<Consign> consignments = await _consignRepository.GetConsignmentsAsync();
 
-                var packagesForPrinting = new List<string>();
+                // Prepare boxes and get consignment IDs
+                List<int?> preparedConsignmentIds = new List<int?>();
 
                 foreach (var consignData in consignments)
                 {
@@ -47,9 +49,7 @@ public class GetLabels
                     if (consignmentId.HasValue)
                     {
                         log.LogInformation($"Parcel prepared. Parcel id: {consignmentId}");
-
-                        // Add the consignmentId to the packagesForPrinting list
-                        packagesForPrinting.Add(consignmentId.ToString());
+                        preparedConsignmentIds.Add(consignmentId);
                     }
                     else
                     {
@@ -57,7 +57,22 @@ public class GetLabels
                     }
                 }
 
-                return packagesForPrinting;
+                // Fetch labels for all prepared consignments
+                List<string> labelsForPrinting = await _glsApiService.GetLabelsAsync(session, LabelMode.four_labels_on_a4_pdf); //TODO : Parametr mode powinien byæ pobierany z enuma
+
+                if (labelsForPrinting != null && labelsForPrinting.Any())
+                {
+                    log.LogInformation($"Fetched {labelsForPrinting.Count} labels for printing.");
+
+                    // Do something with the labels, e.g., send them to a printer
+
+                    return labelsForPrinting;
+                }
+                else
+                {
+                    log.LogWarning("No labels found for printing.");
+                    return new List<string>(); // or return null based on your handling
+                }
             }
             else
             {
@@ -71,5 +86,6 @@ public class GetLabels
             return null;
         }
     }
+
 
 }

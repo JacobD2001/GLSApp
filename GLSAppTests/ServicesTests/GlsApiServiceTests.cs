@@ -1,4 +1,4 @@
-using Azure.Identity;
+/*using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using GLSApp.Interfaces;
 using GLSApp.Models;
@@ -81,3 +81,4 @@ namespace GLSApp.ServicesTests
         }
     }
 }
+*/

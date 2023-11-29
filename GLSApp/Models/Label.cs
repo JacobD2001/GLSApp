@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +9,10 @@ namespace GLSApp.Models
     public class Label
     {
         public int Id { get; set; }
-        public string LabelValue { get; set; }
+        public string File { get; set; }
         public int ConsignId { get; set; }
         public Consign Consign { get; set; }
 
     }
 }
+*/
