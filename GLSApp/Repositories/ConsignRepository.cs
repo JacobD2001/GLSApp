@@ -56,7 +56,7 @@ namespace GLSApp.Repositories
 
             foreach (Consign consignment in allConsignments)
             {
-                
+
                 if (consignment.Labels.Intersect(labels).Any())
                 {
                     consignments.Add(consignment);

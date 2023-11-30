@@ -47,7 +47,7 @@ namespace GLSApp.Services
 
                 var loginData = new
                 {
-                    user_name = usernameSecret.Value.Value, 
+                    user_name = usernameSecret.Value.Value,
                     user_password = passwordSecret.Value.Value
                 };
 
@@ -94,22 +94,22 @@ namespace GLSApp.Services
                     Session = session,
                     consign_prep_data = new
                     {
-                        Id = consign.Id,
-                        RName1 = consign.RName1,
-                        RName2 = consign.RName2,
-                        RName3 = consign.RName3,
-                        RCountry = consign.RCountry,
-                        RZipcode = consign.RZipcode,
-                        RCity = consign.RCity,
-                        RStreet = consign.RStreet,
-                        RPhone = consign.RPhone,
-                        RContact = consign.RContact,
-                        References = consign.References,
-                        Notes = consign.Notes,
-                        Quantity = consign.Quantity,
-                        Weight = consign.Weight,
-                        Date = consign.Date,
-                        Pfc = consign.Pfc,
+                        consign.Id,
+                        consign.RName1,
+                        consign.RName2,
+                        consign.RName3,
+                        consign.RCountry,
+                        consign.RZipcode,
+                        consign.RCity,
+                        consign.RStreet,
+                        consign.RPhone,
+                        consign.RContact,
+                        consign.References,
+                        consign.Notes,
+                        consign.Quantity,
+                        consign.Weight,
+                        consign.Date,
+                        consign.Pfc,
                     }
                 };
 
@@ -130,7 +130,7 @@ namespace GLSApp.Services
                 {
                     Consign responseData = JsonConvert.DeserializeObject<Consign>(response.Content);
                     consignmentId = responseData.Id;
-                    _consignRepository.Save(); 
+                    _consignRepository.Save();
                     return responseData.Id;
                 }
                 else

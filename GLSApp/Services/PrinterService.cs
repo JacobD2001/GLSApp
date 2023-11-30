@@ -22,7 +22,7 @@ namespace GLSApp.Services
 
         public PrinterService(IConsignRepository consignRepository)
         {
-               _consignRepository = consignRepository;
+            _consignRepository = consignRepository;
         }
 
         /// <summary>

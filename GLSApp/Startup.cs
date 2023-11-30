@@ -4,10 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Microsoft.EntityFrameworkCore;
 using GLSApp.Interfaces;
-using GLSApp.Repositories;
 using GLSApp.Services;
+
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using GLSApp.Repositories;
 
 [assembly: FunctionsStartup(typeof(GLSApp.Startup))]
 
