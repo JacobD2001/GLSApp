@@ -20,6 +20,7 @@ namespace GLSApp.Services
     {
         private const string ApiUrl = "https://xxx.xxx.xxx/ade_webapi2.php?wsdl"; //API GLS URL - no access
         private readonly IConsignRepository _consignRepository;
+
         public GlsApiService(IConsignRepository consignRepository)
         {
             _consignRepository = consignRepository;
