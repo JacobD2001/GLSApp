@@ -10,6 +10,5 @@ namespace GLSApp.Interfaces
     public interface IPrinterService
     {
         Task PrintLabelsAsync(List<byte[]> pdfBytesList);
-        Task<byte[]> GeneratePdfFromConsign(Consign consign);
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using GLSApp.CommunicationModels;
-using GLSApp.CommunicationModels.LabelsArrayStructure;
 using GLSApp.Interfaces;
 using GLSApp.Models;
 using GLSApp.Repositories;
@@ -14,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static GLSApp.Data.Enums;
+using GLSApp.Models.CommunicationModels;
 
 namespace GLSApp.Services
 {
@@ -158,7 +157,7 @@ namespace GLSApp.Services
             {
                 var client = new RestClient(ApiUrl);
 
-                // Get consignment IDs from the database
+                //get consignments from database
                 List<Consign> consignments = await _consignRepository.GetConsignmentsAsync();
 
                 // Fetch labels for each consignment
@@ -180,16 +179,13 @@ namespace GLSApp.Services
                     if (response.IsSuccessful)
                     {
                         LabelsArrayResponse responseData = JsonConvert.DeserializeObject<LabelsArrayResponse>(response.Content);
-                        var labelsArray = responseData?.Return?.Items;
+                        var labelsArray = responseData?.Labels;
 
                         // Process labelsArray and add label files to the consignment
                         if (labelsArray != null)
                         {
-                            foreach (var labelData in labelsArray)
-                            {
-                                string labelFile = labelData.Label;
-                                consignment.Labels.Add(labelFile);
-                            }
+                            consignment.Labels.AddRange(labelsArray);
+                            _consignRepository.Save();
                         }
                     }
                     else
@@ -198,7 +194,6 @@ namespace GLSApp.Services
                     }
                 }
 
-                _consignRepository.Save();
 
                 // Return list of labels from all consignments
                 return _consignRepository.GetAllLabelsAsync().Result;

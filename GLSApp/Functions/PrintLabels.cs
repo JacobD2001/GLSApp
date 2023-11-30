@@ -38,16 +38,16 @@ public class PrintLabels
 
             if (request.ContainsKey("package_id"))
             {
-                List<string> labels = request["package_id"];
-                List<Consign> consignments = await _consignRepository.GetConsignmentsByLabelsAsync(labels);
+                List<string> base64EncodedPdfs = request["package_id"];
 
-                if (consignments != null && consignments.Count > 0)
+                if (base64EncodedPdfs != null && base64EncodedPdfs.Count > 0)
                 {
                     List<byte[]> pdfBytesList = new List<byte[]>();
 
-                    foreach (Consign consignment in consignments)
+                    foreach (string base64EncodedPdf in base64EncodedPdfs)
                     {
-                        byte[] pdfBytes = await _printerService.GeneratePdfFromConsign(consignment);
+                        // Decode the base64 string to bytes
+                        byte[] pdfBytes = Convert.FromBase64String(base64EncodedPdf);
                         pdfBytesList.Add(pdfBytes);
                     }
 
@@ -57,7 +57,7 @@ public class PrintLabels
                 }
                 else
                 {
-                    log.LogError("No consignments found for the provided labels.");
+                    log.LogError("No base64-encoded PDFs provided in the request.");
                     return new BadRequestResult();
                 }
             }
@@ -73,5 +73,6 @@ public class PrintLabels
             return new StatusCodeResult(500);
         }
     }
+
 
 }

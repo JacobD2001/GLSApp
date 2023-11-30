@@ -27,7 +27,7 @@ public class GetLabels
     /// <param name="log">The logger instance.</param>
     /// <returns>A list of labels as strings.</returns>
     [FunctionName("GetLabels")]
-    public async Task<List<string>> RunAsync([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log, LabelMode mode)
+    public async Task<List<string>> RunAsync([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
     {
         try
         {

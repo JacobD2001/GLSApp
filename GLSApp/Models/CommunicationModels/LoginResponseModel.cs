@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GLSApp.CommunicationModels.LabelsArrayStructure
+namespace GLSApp.Models.CommunicationModels
 {
-    public class LabelsArrayItem
+    public record LoginResponse
     {
-        public string Label { get; set; }
+        public string session { get; set; }
     }
 }
