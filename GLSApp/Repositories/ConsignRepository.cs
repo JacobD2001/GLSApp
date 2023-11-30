@@ -44,26 +44,7 @@ namespace GLSApp.Repositories
 
             return consignments.SelectMany(c => c.Labels).ToList();
 
-        }
-
-        // Check if the consignment's labels match any of the labels in the request if they do, add the consignment to the list
-
-        public async Task<List<Consign>> GetConsignmentsByLabelsAsync(List<string> labels)
-        {
-            List<Consign> consignments = new List<Consign>();
-
-            List<Consign> allConsignments = await GetConsignmentsAsync();
-
-            foreach (Consign consignment in allConsignments)
-            {
-
-                if (consignment.Labels.Intersect(labels).Any())
-                {
-                    consignments.Add(consignment);
-                }
-            }
-            return consignments;
-        }
+        }      
 
     }
 }
